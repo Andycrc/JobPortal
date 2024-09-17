@@ -1,0 +1,52 @@
+﻿@model MiChamba.ViewModel.OfertaViewModel
+
+<h2 class="text-muted">@Model.Titulo</h2>
+<ul class="list-unstyled">
+    <li class="text-muted"> @Model.Ciudad  - @Model.FechaPublicada</li>
+    <li>
+        <hr />
+    </li>
+    <li style="text-align:justify">
+        <div class="row">
+            <div class="col-md-6">
+                <h3 class="text-dark">Descripción:</h3>
+                @Model.Descripcion
+
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                         @{
+                            if (Model.EstasPostulado == "S")
+                            {
+                                <span class="text-muted mt-5 p-2 text-white">Ya se ha postulado</span>
+                            }
+                            else{
+
+                                <a asp-action="Postularme" asp-route-idOferta="@Model.IdOferta" class="btn btn-success mt-3">Postularme</a>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h3 class="text-dark">Requerimientos:</h3>
+                <p>
+                    <span class="fw-bold">Experiencia:</span>
+                    @Model.Requisitos["experiencia"] 
+                </p>
+                <p>
+                    <span class="fw-bold">Educación:</span>
+                    @Model.Requisitos["educacion"]
+                </p>
+                <span class="fw-bold">Habilidades:</span>
+                <ul>
+                    @foreach (var habilidad in Model.Requisitos["habilidades"])
+                    {
+                        <li>@habilidad</li>
+                    }
+                </ul>
+                
+               
+            </div>
+        </div>
+    </li>
+</ul>

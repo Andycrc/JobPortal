@@ -1,0 +1,190 @@
+﻿@using MiChamba.ViewModel;
+@using MiChamba.Models;
+
+
+@{
+    ViewData["Title"] = "Trabajemos juntos";
+
+    List<OfertaViewModel> ofertas = ViewBag.ofertas;
+    List<Recurso> recursos = ViewBag.recursos ?? Enumerable.Empty<Recurso>();
+
+}
+
+<div class="home-section" id="home-section">
+    <div class="container d-flex justify-content-center ">
+        <form asp-controller="Home" asp-action="Ofertas" method="post" class="d-flex justify-content-center w-100">
+            <input type="text" class="form-control fs-4 border-0" placeholder="Encuentra tu trabajo..." id="buscarInput" name="ofertaSearch" />
+            <input type="submit" value="Buscar" class="btn btn-login fs-4 text-white" id="btn_buscar" name="btnOferta" />
+        </form>
+    </div>
+</div>
+
+<div class="bg-dark p-4">
+
+    <!-- INICIO ULTIMAS OFERTAS -->
+    <div class="container-fluid bg-white p-5 rounded mb-5 " id="ofertas-section">
+        
+        <h3 class="h2 mt-5">ÚLTIMAS OFERTAS PUBLICADAS</h3>
+
+        <div class="container d-flex align-items-center">
+            <div class="ultimas-ofertas mt-5">
+                @{
+                    foreach (OfertaViewModel oferta in ofertas)
+                    {
+                        <div class="card-oferta">
+                            <div class="card-oferta-title bg-dark text-white">
+                                @oferta.Titulo
+                            </div>
+                            <div class="card-oferta-description">
+                                @oferta.Descripcion
+                            </div>
+                            <div class="card-oferta-moreinfo">
+                                <span class="text-muted">
+                                    <small> @oferta.FechaPublicada</small>
+                                </span>
+                            </div>
+                            <div class="card-oferta-link text-end">
+                                <a asp-controller="Home" asp-action="Oferta" asp-route-idOferta="@oferta.IdOferta" class="btn bg-dark text-white">Ver oferta</a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <!-- FIN ULTIMAS OFERTAS -->
+        
+    </div>
+
+    <!-- INICIO -- SOBRE NOSOTROS -->
+    <div class="container bg-dark text-white mb-5 mt-5 pt-5" id="nosotros-section">
+        <h3 class="h1 mt-5">NOSOTROS</h3>
+        <hr />
+        <div class="row">
+            <div class="col-lg-6 fs-4">
+                <p style="text-align:justify;">
+                    ¡Bienvenido a nuestra aplicación web de búsqueda de trabajo! Aquí en <span class="fw-bold text-warning">Mi Chamba</span>, 
+                    estamos comprometidos en ayudarte a encontrar el empleo de tus sueños de una manera rápida y eficiente.
+
+                    <br />
+
+                    Nuestra plataforma está diseñada pensando en ti, 
+                    brindándote todas las herramientas necesarias para que puedas explorar oportunidades laborales en diversas industrias y sectores. 
+                    Ya sea que estés buscando tu primer empleo, cambiando de carrera o simplemente deseas mejorar tu situación laboral actual,
+                    estamos aquí para acompañarte en cada paso del camino.
+
+                </p>
+            </div>
+
+            <div class="col-lg-6 text-center">
+                <img src="~/img/logo-png.jpeg" class="img-fluid w-75 rounded-3" />
+            </div>
+        </div>
+    </div>
+    <!-- FIN -- NOSOTROS -->
+
+    <!-- INICIO RECURSOS -->
+    <div class="container-fluid bg-white p-5 rounded mb-5" id="recursos-section">
+        <h3 class="h1 text-end mt-4">RECURSOS</h3>
+
+        <div class="container d-flex flex-wrap gap-4 mb-3 p-3 justify-content-center">
+          
+            @{
+                foreach (Recurso recurso in recursos)
+                {
+                    if (recurso != null)
+                    {
+                        <div class="card p-3 shadow" style="width: 18rem;">
+                            <img src="~/uploads/img/@recurso.Imagen" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">@recurso.Titulo</h5>
+                                <p class="card-text">@recurso.Descripcion</p>
+                            </div>
+                            <div class="card-body">
+                                <a href="@recurso.Url" class="card-link" target="_blank">Visitar</a>
+                            </div>
+                        </div>
+                    }       
+                }
+            }
+
+        </div>
+        <!-- FIN RECURSOS -->
+
+
+     
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- INICIO ESTADÍSTICAS -->
+    <div class="container-fluid bg-light p-5 rounded mb-5" id="estadisticas-section">
+        <h3 class="h2">ESTADÍSTICAS</h3>
+
+        <div class="container d-flex flex-wrap justify-content-center mt-5">
+            <canvas id="graficoEstadisticas"></canvas>
+        </div>
+    </div>
+    <!-- FIN ESTADÍSTICAS -->
+
+    <!-- Fin Vista -->
+</div>
+
+
+<script>
+    // Obtener referencias a los elementos HTML
+    var canvas = document.getElementById('graficoEstadisticas');
+    var ctx = canvas.getContext('2d');
+
+    // Datos para el gráfico
+    var data = {
+        labels: ['Total de ofertas', 'Candidatos registrados', 'Empresas registradas'],
+        datasets: [{
+            label: 'Estadísticas',
+            data: [@ViewBag.totalOfertas, @ViewBag.totalUsuarios, @ViewBag.totalEmpresas],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    // Opciones de configuración del gráfico
+    var options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                grid: {
+                    display: false
+                }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    };
+
+    // Crear el gráfico utilizando los datos y opciones
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: options
+    });
+</script>
+
+
